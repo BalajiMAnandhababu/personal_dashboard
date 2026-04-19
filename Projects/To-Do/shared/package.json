@@ -1,0 +1,9 @@
+{
+  "name": "@command-dashboard/shared",
+  "version": "1.0.0",
+  "private": true,
+  "exports": {
+    "./constants": "./constants/index.js",
+    "./types": "./types/index.js"
+  }
+}
