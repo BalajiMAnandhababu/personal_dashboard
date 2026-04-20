@@ -9,7 +9,7 @@ Personal task management dashboard for 6 companies.
 - **Database:** Supabase (Postgres) with real-time subscriptions
 - **AI:** Groq API (llama-3.1-8b-instant) — free tier, open source. @anthropic-ai/sdk removed. Only Groq is used for AI tagging.
 - **WhatsApp:** Whapi.Cloud (HTTP REST API, QR-linked personal number). Morning brief 8 AM IST, evening summary 8 PM IST. Webhook at POST /api/whatsapp/incoming handles: done/add/snooze/status commands.
-- **Deploy:** Vercel (client) + Railway (server)
+- **Deploy:** Hostinger VPS (Ubuntu 24.04) — Nginx + PM2. Domain: pdb.infinexcorp.io. IP: 195.179.193.43. Nginx serves React build at `/`, proxies `/api/` to Node on port 3001.
 
 ## Project Structure
 
@@ -57,40 +57,47 @@ npm run dev          # both concurrently
 
 ### Next session TODO (in order)
 
-1. Deploy backend to Railway (set env vars, push, get public URL)
-2. Update Whapi webhook to Railway URL (permanent — no more ngrok)
-3. Deploy frontend to Vercel (set `VITE_API_URL` to Railway URL)
+1. SSH into VPS, run `deploy/setup-vps.sh`, fill in .env, restart PM2
+2. Update Whapi webhook to `https://pdb.infinexcorp.io/api/whatsapp/incoming` (permanent)
+3. Push GitHub repo so VPS can clone it
 4. Mobile polish — bottom nav, touch targets, PWA install prompt
 5. Search / keyboard shortcuts (`/` to focus search, `n` for new task)
 
 ### Environment variables
 
-**Railway (backend)**
+**VPS — `/var/www/personal_dashboard/Projects/To-Do/server/.env`**
 ```
 SUPABASE_URL
 SUPABASE_SERVICE_KEY
 GROQ_API_KEY
 WHAPI_TOKEN
-WHAPI_API_URL          # https://gate.whapi.cloud
-BABAJI_WHATSAPP_NUMBER # 91XXXXXXXXXX@s.whatsapp.net
-CLIENT_URL             # https://your-app.vercel.app
-PORT                   # Railway sets this automatically
+WHAPI_API_URL=https://gate.whapi.cloud
+BABAJI_WHATSAPP_NUMBER=919884719390
+CLIENT_URL=https://pdb.infinexcorp.io
+PORT=3001
 ```
 
-**Vercel (frontend)**
-```
-VITE_API_URL   # https://your-server.railway.app
-```
+No frontend env vars needed — client uses relative `/api/` URLs; nginx proxies them.
 
 ### Deployment steps
 
-**Backend → Railway**
-1. `railway login` then `railway link` in `/server`
-2. Set all env vars in Railway dashboard
-3. Add `Procfile`: `web: node --env-file=.env index.js` (or set start command)
-4. `railway up` — get the public URL
+**First deploy — run once on VPS**
+```bash
+scp deploy/setup-vps.sh root@195.179.193.43:/root/
+ssh root@195.179.193.43
+bash /root/setup-vps.sh
+# Then fill in .env values and pm2 restart command-dashboard
+```
 
-**Frontend → Vercel**
-1. `vercel` in `/client`
-2. Set `VITE_API_URL=https://your-server.railway.app`
-3. Vercel auto-deploys on push to main
+**Re-deploy after code changes**
+```bash
+git push origin main
+ssh root@195.179.193.43 "bash /var/www/personal_dashboard/Projects/To-Do/deploy/redeploy.sh"
+```
+
+**Key paths on VPS**
+- App root: `/var/www/personal_dashboard/Projects/To-Do/`
+- Server .env: `.../server/.env`
+- React build: `.../client/dist/`
+- Nginx config: `/etc/nginx/sites-available/pdb.infinexcorp.io`
+- PM2 process name: `command-dashboard`
