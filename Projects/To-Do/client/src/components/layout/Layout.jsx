@@ -1,10 +1,12 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { COMPANIES } from '../../lib/constants.js';
+import BottomNav from './BottomNav.jsx';
 
 export default function Layout() {
   return (
     <div className="flex min-h-screen">
-      <aside className="w-56 shrink-0 bg-slate-900 border-r border-slate-800 flex flex-col">
+      {/* Sidebar — desktop only */}
+      <aside className="hidden md:flex w-56 shrink-0 bg-slate-900 border-r border-slate-800 flex-col">
         <div className="px-4 py-5 border-b border-slate-800">
           <h1 className="text-sm font-semibold text-slate-100 tracking-wide uppercase">
             Command Dashboard
@@ -19,14 +21,6 @@ export default function Layout() {
             }
           >
             Dashboard
-          </NavLink>
-          <NavLink
-            to="/tasks"
-            className={({ isActive }) =>
-              `block px-3 py-2 rounded text-sm ${isActive ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`
-            }
-          >
-            All Tasks
           </NavLink>
           <NavLink
             to="/backlog"
@@ -58,18 +52,19 @@ export default function Layout() {
               key={c.name}
               className="flex items-center gap-2 px-3 py-2 rounded text-sm text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
             >
-              <span
-                className="w-2 h-2 rounded-full shrink-0"
-                style={{ backgroundColor: c.color }}
-              />
+              <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
               {c.name}
             </div>
           ))}
         </nav>
       </aside>
-      <main className="flex-1 overflow-auto">
+
+      {/* Page content */}
+      <main className="flex-1 overflow-auto pb-14 md:pb-0">
         <Outlet />
       </main>
+
+      <BottomNav />
     </div>
   );
 }

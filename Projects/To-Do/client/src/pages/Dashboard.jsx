@@ -2,18 +2,21 @@ import { useState, useMemo } from 'react';
 import { useTasks } from '../hooks/useTasks.js';
 import { useCompanies } from '../hooks/useCompanies.js';
 import { usePeople } from '../hooks/usePeople.js';
+import { usePWAInstall } from '../hooks/usePWAInstall.js';
 import CompanyFilterTabs from '../components/dashboard/CompanyFilterTabs.jsx';
 import MetricsBar from '../components/dashboard/MetricsBar.jsx';
 import PeoplePanel from '../components/dashboard/PeoplePanel.jsx';
 import QuadrantBoard from '../components/tasks/QuadrantBoard.jsx';
 import QuickAddBar from '../components/tasks/QuickAddBar.jsx';
 import TaskDetailPanel from '../components/tasks/TaskDetailPanel.jsx';
+import BottomNav from '../components/layout/BottomNav.jsx';
 
 export default function Dashboard() {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [selectedPerson, setSelectedPerson]   = useState(undefined);
   const [selectedTaskId, setSelectedTaskId]   = useState(null);
   const [showPeople, setShowPeople]           = useState(true);
+  const { canInstall, install } = usePWAInstall();
 
   const { tasks, loading, createTask, updateTask, deleteTask } = useTasks();
   const { companies } = useCompanies();
@@ -36,7 +39,20 @@ export default function Dashboard() {
   }), [filteredTasks, today]);
 
   return (
-    <div className="flex flex-col h-screen bg-slate-950 overflow-hidden">
+    <div className="flex flex-col h-screen bg-slate-950 overflow-hidden pb-14 md:pb-0">
+      {/* PWA install banner */}
+      {canInstall && (
+        <div className="md:hidden flex items-center justify-between px-4 py-2 bg-indigo-900 border-b border-indigo-700 text-sm">
+          <span className="text-indigo-200">Add to Home Screen for quick access</span>
+          <button
+            onClick={install}
+            className="ml-3 px-3 py-1 rounded bg-indigo-500 text-white text-xs font-medium shrink-0"
+          >
+            Install
+          </button>
+        </div>
+      )}
+
       {/* Company filter tabs */}
       <CompanyFilterTabs
         companies={companies}
@@ -102,6 +118,8 @@ export default function Dashboard() {
           onUpdate={updateTask}
         />
       )}
+
+      <BottomNav />
     </div>
   );
 }
