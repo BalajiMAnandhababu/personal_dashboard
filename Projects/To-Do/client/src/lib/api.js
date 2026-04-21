@@ -51,5 +51,6 @@ export const api = {
     list: (task_id) => request(`/api/time-logs?task_id=${task_id}`),
     start: (task_id) => request('/api/time-logs', { method: 'POST', body: { task_id } }),
     stop: (id, notes) => request(`/api/time-logs/${id}/stop`, { method: 'PATCH', body: { notes } }),
+    summary: (period) => request(`/api/time-logs/summary?period=${period}`),
   },
 };

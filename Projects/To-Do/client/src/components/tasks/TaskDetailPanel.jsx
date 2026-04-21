@@ -187,6 +187,8 @@ export default function TaskDetailPanel({ taskId, companies, people, onClose, on
       estimated_hours:   t.estimated_hours ?? '',
       actual_hours:      t.actual_hours ?? '',
       status:            t.status,
+      due_time:          t.due_time ?? '',
+      recurrence:        t.recurrence ?? '',
     });
     setSubtasks(s ?? []);
     setHistory(h ?? []);
@@ -416,6 +418,28 @@ export default function TaskDetailPanel({ taskId, companies, people, onClose, on
                       onChange={e => handleFieldChange('due_date', e.target.value || null)}
                       className={inputCls}
                     />
+                  </Field>
+
+                  <Field label="Due Time">
+                    <input
+                      type="time"
+                      value={form.due_time ?? ''}
+                      onChange={e => handleFieldChange('due_time', e.target.value || null)}
+                      className={inputCls}
+                    />
+                  </Field>
+
+                  <Field label="Recurrence">
+                    <select
+                      value={form.recurrence ?? ''}
+                      onChange={e => handleFieldChange('recurrence', e.target.value || null)}
+                      className={selectCls}
+                    >
+                      <option value="">None</option>
+                      <option value="daily">Daily</option>
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly">Monthly</option>
+                    </select>
                   </Field>
 
                   <Field label="Est. Hours">

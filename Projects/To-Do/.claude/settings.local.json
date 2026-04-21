@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ssh *)",
+      "Bash(git -C \"E:\\\\Projects\\\\To-Do\" add client/src/components/layout/BottomNav.jsx client/src/components/layout/Layout.jsx client/src/hooks/usePWAInstall.js client/src/pages/Dashboard.jsx)",
+      "Bash(git -C 'E:\\\\Projects\\\\To-Do' commit -m ' *)",
+      "Bash(git -C \"E:\\\\Projects\\\\To-Do\" add client/src/hooks/useKeyboardShortcuts.js client/src/pages/BacklogPage.jsx client/src/pages/Dashboard.jsx client/src/components/tasks/QuickAddBar.jsx)",
+      "Bash(git -C \"E:\\\\Projects\\\\To-Do\" add CLAUDE.md)",
+      "Bash(npm run *)",
+      "Bash(git -C \"E:\\\\Projects\\\\To-Do\" add .)"
+    ]
+  }
+}

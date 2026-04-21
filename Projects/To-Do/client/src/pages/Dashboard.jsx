@@ -6,6 +6,7 @@ import { usePWAInstall } from '../hooks/usePWAInstall.js';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js';
 import CompanyFilterTabs from '../components/dashboard/CompanyFilterTabs.jsx';
 import MetricsBar from '../components/dashboard/MetricsBar.jsx';
+import HoursChart from '../components/dashboard/HoursChart.jsx';
 import PeoplePanel from '../components/dashboard/PeoplePanel.jsx';
 import QuadrantBoard from '../components/tasks/QuadrantBoard.jsx';
 import QuickAddBar from '../components/tasks/QuickAddBar.jsx';
@@ -87,14 +88,17 @@ export default function Dashboard() {
           />
         )}
 
-        {/* People panel */}
-        <div className={`${showPeople ? 'flex' : 'hidden'} md:flex shrink-0`}>
+        {/* Right panel — people + hours chart */}
+        <div className={`${showPeople ? 'flex' : 'hidden'} md:flex shrink-0 flex-col overflow-y-auto`}>
           <PeoplePanel
             people={people}
             tasks={tasks}
             selectedPerson={selectedPerson}
             onSelectPerson={setSelectedPerson}
           />
+          <div className="px-3 pb-3">
+            <HoursChart />
+          </div>
         </div>
 
         {/* Mobile people toggle */}

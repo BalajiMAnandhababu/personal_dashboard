@@ -78,6 +78,14 @@ router.post('/', async (req, res) => {
   res.status(201).json(data);
 });
 
+function nextRecurrenceDate(base, recurrence) {
+  const d = new Date((base ?? new Date().toISOString().split('T')[0]) + 'T00:00:00');
+  if (recurrence === 'daily')   d.setDate(d.getDate() + 1);
+  if (recurrence === 'weekly')  d.setDate(d.getDate() + 7);
+  if (recurrence === 'monthly') d.setMonth(d.getMonth() + 1);
+  return d.toISOString().split('T')[0];
+}
+
 router.patch('/:id', async (req, res) => {
   const { _changed_by, ...fields } = req.body;
 
@@ -103,6 +111,17 @@ router.patch('/:id', async (req, res) => {
         new_value: fields[k] != null ? String(fields[k]) : '',
       }));
     if (historyRows.length) await supabase.from('task_history').insert(historyRows);
+
+    // Auto-recreate recurring tasks when marked done
+    if (fields.status === 'done' && current.recurrence && current.status !== 'done') {
+      const { id, created_at, updated_at, status, reminder_sent, ...rest } = current;
+      await supabase.from('tasks').insert({
+        ...rest,
+        due_date: nextRecurrenceDate(current.due_date, current.recurrence),
+        status: 'todo',
+        reminder_sent: false,
+      });
+    }
   }
 
   res.json(data);
