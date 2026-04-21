@@ -89,14 +89,18 @@ export default function Dashboard() {
         )}
 
         {/* Right panel — people + hours chart */}
-        <div className={`${showPeople ? 'flex' : 'hidden'} md:flex shrink-0 flex-col overflow-y-auto`}>
-          <PeoplePanel
-            people={people}
-            tasks={tasks}
-            selectedPerson={selectedPerson}
-            onSelectPerson={setSelectedPerson}
-          />
-          <div className="px-3 pb-3">
+        <div className={`${showPeople ? 'flex' : 'hidden'} md:flex shrink-0 flex-col`}>
+          {/* People list — flex-1 + min-h-0 so it shrinks when chart is below */}
+          <div className="flex-1 min-h-0 flex overflow-hidden">
+            <PeoplePanel
+              people={people}
+              tasks={tasks}
+              selectedPerson={selectedPerson}
+              onSelectPerson={setSelectedPerson}
+            />
+          </div>
+          {/* Hours chart pinned to bottom of right panel */}
+          <div className="w-56 shrink-0 border-l border-t border-slate-800 bg-slate-900/50 p-3">
             <HoursChart />
           </div>
         </div>
