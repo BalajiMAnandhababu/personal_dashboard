@@ -1,12 +1,16 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import { api } from '../../lib/api.js';
 import AISuggestionCard from './AISuggestionCard.jsx';
 
-export default function QuickAddBar({ companies, people, onTaskCreate }) {
+const QuickAddBar = forwardRef(function QuickAddBar({ companies, people, onTaskCreate }, ref) {
   const [value, setValue] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
   const [suggestion, setSuggestion] = useState(null);
   const inputRef = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => inputRef.current?.focus(),
+  }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -86,4 +90,6 @@ export default function QuickAddBar({ companies, people, onTaskCreate }) {
       </form>
     </div>
   );
-}
+});
+
+export default QuickAddBar;

@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useTasks } from '../hooks/useTasks.js';
 import { useCompanies } from '../hooks/useCompanies.js';
 import { usePeople } from '../hooks/usePeople.js';
 import { usePWAInstall } from '../hooks/usePWAInstall.js';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js';
 import CompanyFilterTabs from '../components/dashboard/CompanyFilterTabs.jsx';
 import MetricsBar from '../components/dashboard/MetricsBar.jsx';
 import PeoplePanel from '../components/dashboard/PeoplePanel.jsx';
@@ -17,6 +18,11 @@ export default function Dashboard() {
   const [selectedTaskId, setSelectedTaskId]   = useState(null);
   const [showPeople, setShowPeople]           = useState(true);
   const { canInstall, install } = usePWAInstall();
+  const quickAddRef = useRef(null);
+
+  useKeyboardShortcuts({
+    'n': () => quickAddRef.current?.focus(),
+  });
 
   const { tasks, loading, createTask, updateTask, deleteTask } = useTasks();
   const { companies } = useCompanies();
@@ -103,6 +109,7 @@ export default function Dashboard() {
 
       {/* Quick add bar — people passed for "Assigned to" dropdown */}
       <QuickAddBar
+        ref={quickAddRef}
         companies={companies}
         people={people}
         onTaskCreate={createTask}

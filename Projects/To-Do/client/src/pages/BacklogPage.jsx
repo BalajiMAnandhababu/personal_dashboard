@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useTasks } from '../hooks/useTasks.js';
 import { useCompanies } from '../hooks/useCompanies.js';
 import { usePeople } from '../hooks/usePeople.js';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js';
 import QuickAddBar from '../components/tasks/QuickAddBar.jsx';
 import TaskDetailPanel from '../components/tasks/TaskDetailPanel.jsx';
 import { CategoryBadge } from '../components/ui/Badge.jsx';
@@ -175,6 +176,13 @@ export default function BacklogPage() {
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [showQuickAdd,  setShowQuickAdd]  = useState(false);
   const [bulkPriority,  setBulkPriority]  = useState(false);
+  const searchRef = useRef(null);
+
+  useKeyboardShortcuts({
+    '/': () => { searchRef.current?.focus(); searchRef.current?.select(); },
+    'n': () => setShowQuickAdd(true),
+    'Escape': () => { setShowQuickAdd(false); setSelectedTaskId(null); },
+  });
 
   // Filter helpers
   const setFilter = (key, val) =>
@@ -268,13 +276,18 @@ export default function BacklogPage() {
             {filtered.length}
           </span>
         </div>
-        <input
-          type="text"
-          placeholder="Search tasks…"
-          value={filters.search}
-          onChange={e => setFilters(p => ({ ...p, search: e.target.value }))}
-          className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-slate-500 transition-colors w-52"
-        />
+        <div className="relative">
+          <input
+            ref={searchRef}
+            type="text"
+            placeholder="Search tasks…"
+            value={filters.search}
+            onChange={e => setFilters(p => ({ ...p, search: e.target.value }))}
+            onKeyDown={e => e.key === 'Escape' && e.target.blur()}
+            className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 pr-12 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-slate-500 transition-colors w-52"
+          />
+          <kbd className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-600 pointer-events-none">/</kbd>
+        </div>
         <button
           onClick={() => setShowQuickAdd(v => !v)}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-xl transition-colors whitespace-nowrap"
